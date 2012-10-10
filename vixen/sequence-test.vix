@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Program>
+  <Time>6000</Time>
+  <EventPeriodInMilliseconds>1000</EventPeriodInMilliseconds>
+  <MinimumLevel>0</MinimumLevel>
+  <MaximumLevel>255</MaximumLevel>
+  <AudioDevice>-1</AudioDevice>
+  <AudioVolume>0</AudioVolume>
+  <Channels>
+    <Channel color="-1" output="0" id="634845316106207126" enabled="True">Channel 1</Channel>
+    <Channel color="-1" output="1" id="634845316106217127" enabled="True">Channel 2</Channel>
+    <Channel color="-1" output="2" id="634845316106227127" enabled="True">Channel 3</Channel>
+    <Channel color="-1" output="3" id="634845316106237128" enabled="True">Channel 4</Channel>
+    <Channel color="-1" output="4" id="634845316106247128" enabled="True">Channel 5</Channel>
+    <Channel color="-1" output="5" id="634845316106257129" enabled="True">Channel 6</Channel>
+    <Channel color="-1" output="6" id="634845316106267129" enabled="True">Channel 7</Channel>
+    <Channel color="-1" output="7" id="634845316106277130" enabled="True">Channel 8</Channel>
+    <Channel color="-1" output="8" id="634845316106287131" enabled="True">Channel 9</Channel>
+    <Channel color="-1" output="9" id="634845316106297131" enabled="True">Channel 10</Channel>
+    <Channel color="-1" output="10" id="634845316106307132" enabled="True">Channel 11</Channel>
+    <Channel color="-1" output="11" id="634845316106317132" enabled="True">Channel 12</Channel>
+    <Channel color="-1" output="12" id="634845316106327133" enabled="True">Channel 13</Channel>
+    <Channel color="-1" output="13" id="634845316106337133" enabled="True">Channel 14</Channel>
+    <Channel color="-1" output="14" id="634845316106347134" enabled="True">Channel 15</Channel>
+    <Channel color="-1" output="15" id="634845316106357135" enabled="True">Channel 16</Channel>
+    <Channel color="-1" output="16" id="634845316106367135" enabled="True">Channel 17</Channel>
+    <Channel color="-1" output="17" id="634845316106377136" enabled="True">Channel 18</Channel>
+    <Channel color="-1" output="18" id="634845316106387136" enabled="True">Channel 19</Channel>
+    <Channel color="-1" output="19" id="634845316106397137" enabled="True">Channel 20</Channel>
+    <Channel color="-1" output="20" id="634845316106407137" enabled="True">Channel 21</Channel>
+    <Channel color="-1" output="21" id="634845316106417138" enabled="True">Channel 22</Channel>
+    <Channel color="-1" output="22" id="634845316106427139" enabled="True">Channel 23</Channel>
+    <Channel color="-1" output="23" id="634845316106437139" enabled="True">Channel 24</Channel>
+    <Channel color="-1" output="24" id="634845316106447140" enabled="True">Channel 25</Channel>
+    <Channel color="-1" output="25" id="634845316106457140" enabled="True">Channel 26</Channel>
+    <Channel color="-1" output="26" id="634845316106467141" enabled="True">Channel 27</Channel>
+    <Channel color="-1" output="27" id="634845316106477141" enabled="True">Channel 28</Channel>
+    <Channel color="-1" output="28" id="634845316106487142" enabled="True">Channel 29</Channel>
+    <Channel color="-1" output="29" id="634845316106497143" enabled="True">Channel 30</Channel>
+    <Channel color="-1" output="30" id="634845316106507143" enabled="True">Channel 31</Channel>
+    <Channel color="-1" output="31" id="634845316106517144" enabled="True">Channel 32</Channel>
+    <Channel color="-1" output="32" id="634845316106527144" enabled="True">Channel 33</Channel>
+    <Channel color="-1" output="33" id="634845316106537145" enabled="True">Channel 34</Channel>
+    <Channel color="-1" output="34" id="634845316106547145" enabled="True">Channel 35</Channel>
+    <Channel color="-1" output="35" id="634845316106557146" enabled="True">Channel 36</Channel>
+    <Channel color="-1" output="36" id="634845316106567147" enabled="True">Channel 37</Channel>
+    <Channel color="-1" output="37" id="634845316106577147" enabled="True">Channel 38</Channel>
+    <Channel color="-1" output="38" id="634845316106587148" enabled="True">Channel 39</Channel>
+    <Channel color="-1" output="39" id="634845316106597148" enabled="True">Channel 40</Channel>
+    <Channel color="-1" output="40" id="634845316106607149" enabled="True">Channel 41</Channel>
+    <Channel color="-1" output="41" id="634845316106617149" enabled="True">Channel 42</Channel>
+    <Channel color="-1" output="42" id="634845316106627150" enabled="True">Channel 43</Channel>
+    <Channel color="-1" output="43" id="634845316106637151" enabled="True">Channel 44</Channel>
+    <Channel color="-1" output="44" id="634845316106647151" enabled="True">Channel 45</Channel>
+    <Channel color="-1" output="45" id="634845316106657152" enabled="True">Channel 46</Channel>
+    <Channel color="-1" output="46" id="634845316106667152" enabled="True">Channel 47</Channel>
+    <Channel color="-1" output="47" id="634845316106677153" enabled="True">Channel 48</Channel>
+    <Channel color="-1" output="48" id="634845316106687153" enabled="True">Channel 49</Channel>
+    <Channel color="-1" output="49" id="634845316106697154" enabled="True">Channel 50</Channel>
+    <Channel color="-1" output="50" id="634845316106707155" enabled="True">Channel 51</Channel>
+    <Channel color="-1" output="51" id="634845316106717155" enabled="True">Channel 52</Channel>
+    <Channel color="-1" output="52" id="634845316106727156" enabled="True">Channel 53</Channel>
+    <Channel color="-1" output="53" id="634845316106737156" enabled="True">Channel 54</Channel>
+    <Channel color="-1" output="54" id="634845316106747157" enabled="True">Channel 55</Channel>
+    <Channel color="-1" output="55" id="634845316106757157" enabled="True">Channel 56</Channel>
+    <Channel color="-1" output="56" id="634845316106767158" enabled="True">Channel 57</Channel>
+    <Channel color="-1" output="57" id="634845316106777159" enabled="True">Channel 58</Channel>
+    <Channel color="-1" output="58" id="634845316106787159" enabled="True">Channel 59</Channel>
+    <Channel color="-1" output="59" id="634845316106797160" enabled="True">Channel 60</Channel>
+    <Channel color="-1" output="60" id="634845316106807160" enabled="True">Channel 61</Channel>
+    <Channel color="-1" output="61" id="634845316106817161" enabled="True">Channel 62</Channel>
+    <Channel color="-1" output="62" id="634845316106827161" enabled="True">Channel 63</Channel>
+    <Channel color="-1" output="63" id="634845316106837162" enabled="True">Channel 64</Channel>
+  </Channels>
+  <PlugInData>
+    <PlugIn name="Generic serial" key="806581593" id="0" enabled="True" from="1" to="64">
+      <Name>COM2</Name>
+      <Baud>57600</Baud>
+      <Parity>None</Parity>
+      <Data>8</Data>
+      <Stop>One</Stop>
+      <Header checked="False" />
+      <Footer checked="True">n</Footer>
+    </PlugIn>
+  </PlugInData>
+  <SortOrders lastSort="-1" />
+  <EventValues>////AP8A////AAAAAP//AAAAAP//AAAAAP//AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD/AAAAAAD//wAAAAD/AP8A</EventValues>
+  <LoadableData />
+  <EngineType>Standard</EngineType>
+  <Extensions>
+    <Extension type=".vix" />
+  </Extensions>
+</Program>
