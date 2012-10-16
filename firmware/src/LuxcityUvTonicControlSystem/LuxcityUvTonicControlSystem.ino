@@ -65,25 +65,27 @@ uint8_t i2cAddresses[NUM_RELAY_CONTROL_BOARDS] =
 
 void SetRelayStates(uint8_t relayDriverShieldNum, uint8_t relayStates);
 
-String inputString = "";         //!< A string to hold incoming data
+uint8_t inputString[200] = {0};         //!< A string to hold incoming data
 boolean stringComplete = false;  //!< Whether the string is complete
 
 void setup() {
   // Initialize serial
   Serial.begin(57600);
+  //Serial.write("Test");
   // Reserve bytes for the inputString (+1 for END_OF_MSG_CHAR)
-  inputString.reserve(NUM_CHANNELS + 1);
+  //inputString.reserve(NUM_CHANNELS + 1);
   
   Wire.begin(); // Wake up I2C bus
   uint8_t i = 0;
   for(i = 0; i < 8; i++)
   {
+    /*
     // Set addressing style
     Wire.beginTransmission(i2cAddresses[i]);
     Wire.write(0x12);
     Wire.write(0x20); // use table 1.4 addressing
     Wire.endTransmission();
-  
+    */
     // Set I/O bank A to outputs
     Wire.beginTransmission(i2cAddresses[i]);
     Wire.write(0x00); // IODIRA register
@@ -110,10 +112,14 @@ void loop()
     uint8_t relayNum = 0;
     uint8_t relayStates = 0;
     
+    char txBuff[100];
+    
     for(i = 0; i < NUM_CHANNELS; i++)
     {
-          // Check for any value other than 0 to turn relay on. If 0, leave alone
-          if(inputString[i] != 1)
+          snprintf(txBuff, sizeof(txBuff), "Val = %u\r\n", inputString[i]);
+          //Serial.write(txBuff);
+          // Check for 255 to turn relay on. If anything else, leave off
+          if(inputString[i] == 255)
           {
             //digitalWrite(13, HIGH);
             // Set relay on
@@ -165,7 +171,8 @@ void loop()
     
     //Serial.println(inputString); 
     // Clear the string for the next message
-    inputString = "";
+    memset(inputString, 0x00, sizeof(inputString));
+    //inputString = "";
     stringComplete = false;
   }
 }
@@ -178,6 +185,7 @@ void SetRelayStates(uint8_t relayDriverShieldNum, uint8_t relayStates)
   Wire.endTransmission();
 }
 
+/*
 void sendValueToLatch(int latchValue)
 {
   Wire.beginTransmission(i2cAddresses[0]);
@@ -185,6 +193,7 @@ void sendValueToLatch(int latchValue)
   Wire.write(latchValue);  // Send value to bank A
   Wire.endTransmission();
 }
+*/
 
 /*
   SerialEvent occurs whenever a new data comes in the
@@ -193,17 +202,20 @@ void sendValueToLatch(int latchValue)
  response.  Multiple bytes of data may be available.
  */
 void serialEvent() {
+  static uint8_t inputStringPos = 0;
   while (Serial.available()) {
     // get the new byte:
-    char inChar = (char)Serial.read();
+    uint8_t inChar = (uint8_t)Serial.read();
    
     // add it to the inputString:
-    inputString += inChar;
+    inputString[inputStringPos] = inChar;
+    inputStringPos++;
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:
     if (inChar == END_OF_MSG_CHAR) {
       //digitalWrite(13, HIGH);
       stringComplete = true;
+      inputStringPos = 0;
     } 
   }
 }
