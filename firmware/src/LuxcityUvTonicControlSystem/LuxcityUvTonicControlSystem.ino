@@ -1,51 +1,53 @@
-/*
-  Serial Event example
+//!
+//! @file    LuxcityUvTonicControlSystem.ino
+//! @author  Geoffrey Hunter <gbmhunter@gmail.com> (www.cladlab.com)
+//! @date    03/10/2012
+//! @brief   Control sequencer interface between Vixen software and
+//!          Freetronics relay control shields.
+//! @details
+//!    <b>Last Modified:         </b> 27/10/2012       \n
+//!    <b>Version:               </b> v1.0.0           \n
+//!    <b>Company:               </b> CladLabs         \n
+//!    <b>Project:               </b> Luxcity Tonic Control System \n
+//!    <b>Language:              </b> C                \n
+//!    <b>Compiler:              </b> GCC              \n
+//!    <b>uC Model:              </b> Arduino Uno      \n
+//!    <b>Computer Architecture: </b> ATMEGA           \n
+//!    <b>Operating System:      </b> none             \n
+//!    <b>License:               </b> GPLv3            \n
+//!    <b>Documentation Format:  </b> Doxygen          \n
+//!
+//!  Vixen must be confired with the 'Generic Serial' output, at 56700 baud, and to send the 
+//!  end character 'n'. Vixen must have 64 channels. Firmware will turn channel x relay on when
+//!  the Vixen intensity for that channel is set to 255, otherwise off.
  
- When new serial data arrives, this sketch adds it to a String.
- When a newline is received, the loop prints the string and 
- clears it.
- 
- Inputs from the free PC-based Vixen sequencer.
- 
- Outputs to FreeTronics Relay Shields via I2C.
- Address ranges froms 0x20 to 0x27 depending in jumper settings
- J3 J2 J1  I2C Add
- 0  0  0   0x20
- 0  0  1   0x21
- 0  1  0   0x22
- 0  1  1   0x23
- 1  0  0   0x24
- 1  0  1   0x25
- 1  1  0   0x26
- 1  1  1   0x27
- 
- The 8 relays per board are controlled by a single byte, with one bit each corresonding to a relay, starting from the LSB.
- Relays are connected to bank A.
- 
- 
- Created 9 May 2011
- by Tom Igoe
- 
- This example code is in the public domain.
- 
- http://www.arduino.cc/en/Tutorial/SerialEvent
- 
- */
+//===============================================================================================//
+//========================================== INCLUDES ===========================================//
+//===============================================================================================//
  
 #include "Wire.h"
 
 #include <LiquidCrystal.h>
 
+//===============================================================================================//
+//========================================== DEFINES ============================================//
+//===============================================================================================//
+
 LiquidCrystal lcd( 8, 9, 4, 5, 6, 7 );
 
+#define UART_BAUD_RATE 57600          //!< Baud rate of serial between Arduino and computer
+                                      //!< (configure Vixen Generic Serial output to same baud rate)
 
-  
+#define END_OF_MSG_CHAR 'n'           //!< The end of message character. This is set-up in
+                                      //!< output serial plugin in Vixen
+#define NUM_RELAY_CONTROL_BOARDS 8    //!< Number of control boards
+#define NUM_CHANNELS 64               //!< Number of control channels
 
- 
-#define END_OF_MSG_CHAR 'n'
-#define NUM_CHANNELS 64          //!< Number of control channels
-#define NUM_RELAY_CONTROL_BOARDS 8
+//===============================================================================================//
+//=================================== PRIVATE TYPEDEFS ==========================================//
+//===============================================================================================//
 
+//! Enumeration of the 8 relay boards
 typedef enum
 {
   RELAY_BOARD_1,
@@ -58,7 +60,13 @@ typedef enum
   RELAY_BOARD_8
 } relayDriverShieldNum_t;
 
+//===============================================================================================//
+//====================================== PRIVATE VARIABLES ======================================//
+//===============================================================================================//
+
 //! Array to hold the I2C addresses of the relay control boards
+//! These are set-up using the PCB jumpers on the board themselves.
+//! Up to 8-different addresses settable (3-bit)
 uint8_t i2cAddresses[NUM_RELAY_CONTROL_BOARDS] = 
 {
   0x20,
@@ -71,36 +79,50 @@ uint8_t i2cAddresses[NUM_RELAY_CONTROL_BOARDS] =
   0x27
 };
 
+uint8_t inputString[200] = {0};         //!< A string to hold incoming data
+boolean stringComplete = false;         //!< Whether the string is complete
+boolean _pass = true;                   //!< Set to false if CheckForConflict() finds any invalid
+                                        //!< relay states
+
+//===============================================================================================//
+//=================================== FUNCTION PROTOTYPES =======================================//
+//===============================================================================================//
+
 void SetRelayStates(uint8_t relayDriverShieldNum, uint8_t relayStates);
 
-uint8_t inputString[200] = {0};         //!< A string to hold incoming data
-boolean stringComplete = false;  //!< Whether the string is complete
-boolean _pass = true;
+//===============================================================================================//
+//===================================== PRIVATE FUNCTIONS =======================================//
+//===============================================================================================//
 
+//! @brief    Setup (init) function
 void setup() {
-  // Initialize serial
-  Serial.begin(57600);
-  //Serial.write("Test");
-  // Reserve bytes for the inputString (+1 for END_OF_MSG_CHAR)
-  //inputString.reserve(NUM_CHANNELS + 1);
   
+  // Initialize serial
+  Serial.begin(UART_BAUD_RATE);
+  //Serial.write("Test");
+  
+  // Setup LCD
   lcd.begin(16, 2);
   lcd.setCursor(0, 0);
   lcd.print("Tonic Sequencer");
   lcd.setCursor(0, 1);
   lcd.print("S: Idle");
   
-  Wire.begin(); // Wake up I2C bus
+   // Setup I2C
+  Wire.begin();
   uint8_t i = 0;
   for(i = 0; i < 8; i++)
   {
-    /*
+    /* This is commented out since the Freetronics example
+    code didn't seem to do the right thing (this turned on
+    relay 6).
     // Set addressing style
     Wire.beginTransmission(i2cAddresses[i]);
     Wire.write(0x12);
     Wire.write(0x20); // use table 1.4 addressing
     Wire.endTransmission();
     */
+    
     // Set I/O bank A to outputs
     Wire.beginTransmission(i2cAddresses[i]);
     Wire.write(0x00); // IODIRA register
@@ -112,12 +134,14 @@ void setup() {
   pinMode(13, OUTPUT);
 }
 
-
-
+//! @brief    Main loop
 void loop() 
 {
+  //! Used to determine wether firmware should display idle or active on screen
+  //! (by way of timeout)
   static uint32_t elaspedTimeLastMsgMs = 0;
-  // print the string when a newline arrives:
+  
+  // Take action if new string has arrived (looks for END_OF_MSG_CHAR)
   if (stringComplete) 
   {
     // Process string
@@ -175,6 +199,7 @@ void loop()
     memset(inputString, 0x00, sizeof(inputString));
     //inputString = "";
     
+    // Display state
     lcd.setCursor(0, 1);
     if(_pass == true)
     {
@@ -201,11 +226,13 @@ void loop()
       lcd.print(numRelaysOn, DEC);
     }
     
+    // Reset timeout counter
     elaspedTimeLastMsgMs = millis();
     
     stringComplete = false;
   }
   
+  // Check for active state timeout
   if(millis() > elaspedTimeLastMsgMs + 1500)
   {
     lcd.setCursor(0, 1);
@@ -214,27 +241,33 @@ void loop()
   
 }
 
+//! @brief    Checks for relay state conflicts
+//! @details  A conflict occurs if both air and water relays
+//!            for the same pipe are on at the same time.
 uint8_t CheckForConflict(uint8_t relayStates)
 {
-  
+  // Relay 1, 2 check
   if((relayStates & 0x01) && (relayStates & 0x02))
   {
     relayStates = relayStates & 0b11111100;
     _pass = false;
   }
   
+  // Relay 3, 4 check
   if((relayStates & 0x04) && (relayStates & 0x08))
   {
     relayStates = relayStates & 0b11110011;
     _pass = false;
   }
   
+  // Relay 5, 6 check
   if((relayStates & 0x10) && (relayStates & 0x20))
   {
     relayStates = relayStates & 0b11001111;
     _pass = false;
   }
   
+  // Relay 7, 8 check
   if((relayStates & 0x40) && (relayStates & 0x80))
   {
     relayStates = relayStates & 0b00111111;
@@ -245,6 +278,8 @@ uint8_t CheckForConflict(uint8_t relayStates)
   
 }
 
+//! @brief    Sends the I2C commands to control the 8 relays
+//!            on one of the relay shields.
 void SetRelayStates(uint8_t relayDriverShieldNum, uint8_t relayStates)
 {
   Wire.beginTransmission(i2cAddresses[relayDriverShieldNum]);
@@ -253,25 +288,15 @@ void SetRelayStates(uint8_t relayDriverShieldNum, uint8_t relayStates)
   Wire.endTransmission();
 }
 
-/*
-void sendValueToLatch(int latchValue)
-{
-  Wire.beginTransmission(i2cAddresses[0]);
-  Wire.write(0x12);        // Select GPIOA
-  Wire.write(latchValue);  // Send value to bank A
-  Wire.endTransmission();
-}
-*/
-
-/*
-  SerialEvent occurs whenever a new data comes in the
- hardware serial RX.  This routine is run between each
- time loop() runs, so using delay inside loop can delay
- response.  Multiple bytes of data may be available.
- */
+//! @brief  SerialEvent occurs whenever a new data comes in the
+//!         hardware serial RX
+//! @note   Called by interrupt
 void serialEvent() {
+  
   static uint8_t inputStringPos = 0;
-  while (Serial.available()) {
+  
+  while (Serial.available())
+  {
     // get the new byte:
     uint8_t inChar = (uint8_t)Serial.read();
    
@@ -280,7 +305,8 @@ void serialEvent() {
     inputStringPos++;
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:
-    if (inChar == END_OF_MSG_CHAR) {
+    if (inChar == END_OF_MSG_CHAR)
+    {
       //digitalWrite(13, HIGH);
       stringComplete = true;
       inputStringPos = 0;
@@ -288,4 +314,4 @@ void serialEvent() {
   }
 }
 
-
+// EOF
